@@ -8,7 +8,7 @@ const userRoutes = require("./backend/routes/userRoutes");
 const app = express();
 
 // Load environment variables
-require("dotenv").config();
+const env = require("dotenv").config();
 
 // Middleware
 app.use(express.json());
@@ -16,14 +16,15 @@ app.use(cors());
 
 // Connect to MongoDB using .env variable
 mongoose
-  .connect(process.env.MONGO_URI) // Corrected to directly use process.env
+  .connect(env.parsed["process.env.MONGO_URI"])
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("Error connecting to MongoDB:", err));
+
 
 // Mount Routers
 app.use("/api/messages", messageRoutes);
 app.use("/", userRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log(`Server running on port ${3000}`);
 }); 
