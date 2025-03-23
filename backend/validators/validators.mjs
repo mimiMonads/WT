@@ -1,5 +1,6 @@
 
-const Joi = require('joi');
+//@ts-ignore
+import Joi from 'joi';
 
 // Reusable middleware creator
 const validate = (schema) => {
@@ -83,11 +84,25 @@ const postSchema = Joi.object({
   tags: Joi.array().items(Joi.string()).optional()
 });
 
-module.exports = {
+const exp =  {
   // Reuse your validate function with each schema as needed
   validateUser: validate(userSchema),
   validateLogin: validate(loginSchema),
   validateMessage: validate(messageSchema),
   validateReply: validate(replySchema),
   validatePost: validate(postSchema)
+};
+
+export const validateUser = validate(userSchema);
+export const validateLogin = validate(loginSchema);
+export const validateMessage = validate(messageSchema);
+export const validateReply = validate(replySchema);
+export const validatePost = validate(postSchema);
+
+export {
+  userSchema,
+  loginSchema,
+  messageSchema,
+  replySchema,
+  postSchema
 };

@@ -1,6 +1,6 @@
-const asyncHandler = require("express-async-handler");
-const { Message } = require("../models/models");
-const { messageSchema } = require("../validators/validators");
+import asyncHandler from "express-async-handler";
+import { Message } from "../models/models.mjs";
+import { messageSchema } from "../validators/validators.mjs";
 
 /**
  * @desc    Get all Messages
@@ -103,7 +103,7 @@ const searchMessages = asyncHandler(async (req, res) => {
   res.status(200).json(messages);
 });
 
-module.exports = {
+export  {
   getMessages,
   createMessage,
   getMessage,

@@ -1,24 +1,8 @@
 // routes/userRoutes.js
-const express = require("express");
-const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
-const {
-  getMainPage,
-  getUserProfile,
-  getUserInterface,
-  loginForm,
-  loginUser,
-  logoutUser,
-  getUserMessages,
-  refuseMessage,
-  replayMessage,
-  addProfilePicture,
-  addStatus,
-  setPrivacy,
-  addMessageToUser,
-  aboutProject,
-  privacyPage,
-} = require("../controllers/userController");
+import { Router } from "express";
+const router = Router();
+import { protect } from "../middleware/authMiddleware.mjs";
+import { getMainPage, getUserProfile, getUserInterface, loginForm, loginUser, logoutUser, getUserMessages, refuseMessage, replayMessage, addProfilePicture, addStatus, setPrivacy, addMessageToUser, aboutProject, privacyPage } from "../controllers/userController.mjs";
 
 // Public routes
 router.get("/", getMainPage);
@@ -41,4 +25,4 @@ router.post("/user/status", protect, addStatus);
 router.post("/user/privacy", protect, setPrivacy);
 router.post("/post/:userID", protect, addMessageToUser);
 
-module.exports = router;
+export default router;

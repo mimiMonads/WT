@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
-const { User } = require("../models/models.js");
-const { decode } = require("punycode");
+import { verify } from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+import { User } from "../models/models.mjs";
+import { decode } from "node:punycode";
 
 /**
  * Protect routes using JWT-based authentication.
@@ -22,7 +22,7 @@ const protect = asyncHandler(async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1]; // extract token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = verify(token, process.env.JWT_SECRET);
 
       
       req.user = await User.findById(decoded.id)
@@ -45,5 +45,5 @@ const protect = asyncHandler(async (req, res, next) => {
     .json({ error: "Not authorized, no token provided" });
 });
 
-module.exports = { protect };
+export { protect };
 

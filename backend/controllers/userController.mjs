@@ -1,7 +1,7 @@
-const asyncHandler = require("express-async-handler");
-const generateToken = require("../utils/generateToken");
-const { User, Message } = require("../models/models");
-const { loginSchema, messageSchema } = require("../validators/validators");
+import asyncHandler from "express-async-handler";
+import generateToken from "../utils/generateToken.mjs";
+import { User, Message } from "../models/models.mjs";
+import { loginSchema, messageSchema } from "../validators/validators.mjs";
 
 /**
  * @desc   Login interface
@@ -244,7 +244,7 @@ const privacyPage = (req, res) => {
   res.send("Privacy information...");
 };
 
-module.exports = {
+export  {
   getMainPage,
   getUserProfile,
   getUserInterface,

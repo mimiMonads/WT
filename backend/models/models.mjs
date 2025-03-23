@@ -1,9 +1,9 @@
 
 
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -32,9 +32,9 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const MessageSchema = new mongoose.Schema({
+const MessageSchema = new Schema({
   to: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
@@ -55,14 +55,14 @@ const MessageSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const ReplySchema = new mongoose.Schema({
+const ReplySchema = new Schema({
   message: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Message',
     required: true
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
@@ -74,7 +74,7 @@ const ReplySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const PostSchema = new mongoose.Schema({
+const PostSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -94,12 +94,12 @@ const PostSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Create and export models
-const User = mongoose.model('User', UserSchema);
-const Message = mongoose.model('Message', MessageSchema);
-const Reply = mongoose.model('Reply', ReplySchema);
-const Post = mongoose.model('Post', PostSchema);
+const User = model('User', UserSchema);
+const Message = model('Message', MessageSchema);
+const Reply = model('Reply', ReplySchema);
+const Post = model('Post', PostSchema);
 
-module.exports = {
+export  {
   User,
   Message,
   Reply,

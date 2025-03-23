@@ -1,13 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const {
-  getMessages,
-  createMessage,
-  getMessage,
-  updateMessage,
-  deleteMessage,
-  searchMessages,
-} = require("../controllers/messageController");
+import { Router } from "express";
+const router = Router();
+import { getMessages, createMessage, getMessage, updateMessage, deleteMessage, searchMessages } from "../controllers/messageController.mjs";
 
 // /api/messages
 router.route("/")
@@ -24,4 +17,4 @@ router
   .put(updateMessage)
   .delete(deleteMessage);
 
-module.exports = router;
+export default router;
