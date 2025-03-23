@@ -1,4 +1,5 @@
-import { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+const sign = jwt.sign
 
 /**
  * Generate a JWT token using the user's ID as payload.

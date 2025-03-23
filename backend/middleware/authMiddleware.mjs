@@ -1,7 +1,7 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import { User } from "../models/models.mjs";
-import { decode } from "node:punycode";
+const verify = jwt.verify
 
 /**
  * Protect routes using JWT-based authentication.
