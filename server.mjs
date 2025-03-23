@@ -1,5 +1,4 @@
 import express, { json } from "express";
-import cors from "cors";
 import { connect } from "mongoose";
 import messageRoutes from "./backend/routes/messageRoutes.mjs";
 import userRoutes from "./backend/routes/userRoutes.mjs";
@@ -12,7 +11,6 @@ const env = dotenv.config();;
 
 // Middleware
 app.use(json());
-app.use(cors());
 
 // Connect to MongoDB using .env variable
 connect(env.parsed["process.env.MONGO_URI"])
