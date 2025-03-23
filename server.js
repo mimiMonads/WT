@@ -24,4 +24,6 @@ mongoose
 app.use("/api/messages", messageRoutes);
 app.use("/", userRoutes);
 
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+}); 
