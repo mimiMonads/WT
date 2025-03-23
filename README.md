@@ -1,9 +1,9 @@
 # Q&A Website
 
-# Integrants
-## Antony Vladimir Montemayor Terrazas 3105325
-## Bruna Gonçalves Heleno 3009733
-## Elton Nakaoji
+## Integrants
+#### Antony Vladimir Montemayor Terrazas 3105325
+#### Bruna Gonçalves Heleno 3009733
+#### Elton Nakaoji 3093840
 
 This project is part of the Web Technologies course at Griffith College Cork.
 It is a **Question and Answer (Q&A) Website** designed for developers to ask and answer technical questions. The plataform includes authentication, CRUD operation, templating, and validation.
