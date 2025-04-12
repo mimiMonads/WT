@@ -7,6 +7,8 @@ const SignIn = () => {
   const [letterClass, setLetterClass] = useState('text-animate')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
 
   useEffect(() =>{
     const timeoutId = setTimeout(() => {
@@ -17,9 +19,19 @@ const SignIn = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('Signing in with:', { email, password })
-
-  }
+    //console.log('Signing in with:', { email, password })
+        // Test login
+        const validEmail = '123@abc.ie'
+        const validPassword = '1234'
+    
+        if (email === validEmail && password === validPassword) {
+          setError('')
+          console.log('Logged in!')
+          // Navigate to dashboard or user page here
+        } else {
+          setError('Incorrect email or password.')
+        }
+      }
 
   return (
     <>
@@ -48,7 +60,9 @@ const SignIn = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-          
+
+          {error && <div className="error-message">{error}</div>}
+
             <div className="forgot-password">
               <a href="/forgotpassword">Forgot Password?</a>
             </div>

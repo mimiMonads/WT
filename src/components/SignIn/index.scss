@@ -34,9 +34,9 @@
       input {
         padding: 12px;
         border-radius: 10px;
-        background-color: #3333cc;
-        color: #fff;
-        border: 1px solid #3333cc;
+        background-color: #fff;
+        color: #030303;
+        border: 1px solid #fff;
         font-size: 15px;
 
         &:focus {
@@ -57,6 +57,13 @@
             text-decoration: underline;
           }
         }
+        .error-message {
+          color: #ff4d4f;
+          font-size: 14px;
+          margin-top: -10px;
+          margin-bottom: 10px;
+        }
+        
       }
 
       .flat-button {
