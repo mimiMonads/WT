@@ -24,9 +24,14 @@ It is a **Question and Answer (Q&A) Website** designed for developers to ask and
 - **User Authentication**
 - Users can login and logout
     - email, token generation
+    - Displays error on incorrect email/password
 - Users can add profile picture
 - Users can set their status
 - Users can set their privacy to allow who can send messages to them
+- **User profile**
+- Users can upload a profile picture
+- Set a status
+- Side navigation menu
 - **Q&A Posting**
 - Users can post, edit, and delete questions
 - Users can reply messages
