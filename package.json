@@ -44,7 +44,8 @@
     "karma-jasmine-html-reporter": "~2.1.0"
   },
   "scripts": {
-    "start": "deno run -A server.mjs & react-scripts start",
+    "start": "react-scripts start",
+    "backend:": "deno run -A server.mjs",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
