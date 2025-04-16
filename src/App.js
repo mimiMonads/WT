@@ -6,6 +6,7 @@ import PrivacyPolicy from './components/PrivacyPolicy'
 
 import './App.scss'
 
+
 function App() {
   return (
     <>
