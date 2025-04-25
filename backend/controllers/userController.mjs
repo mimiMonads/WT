@@ -12,51 +12,77 @@ const loginForm = asyncHandler(async (req, res) => {
   res.send("Login interface (GET)");
 });
 
+
+
+const signup = asyncHandler(async (req, res) => {
+  const { error, value } = signupSchema.validate(req.body)
+  if (error) return res.status(400).json({ error: error.details[0].message })
+
+  const existing = await User.findOne({ name: value.name })
+  if (existing) return res.status(409).json({ error: 'Username already taken' })
+
+  const passwordHash = await bcrypt.hash(value.password, 10)
+  const newUser = await User.create({ 
+    name: value.name, 
+    passwordHash,
+    profilePicture: value.profilePicture,
+    status: value.status,
+    privacy: value.privacy,
+  })
+
+  const token = generateToken(newUser._id)
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict',
+    maxAge: 24*60*60*1000,
+  })
+
+  res.status(201).json({
+    _id: newUser._id,
+    name: newUser.name,
+    privacy: newUser.privacy,
+    message: 'Account created and logged in',
+  })})
+
 /**
  * @desc   Login user & return JWT
  * @route  POST /login
  */
 const loginUser = asyncHandler(async (req, res) => {
-  const { error } = loginSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ error: error.details[0].message });
-  }
+  const { error } = loginSchema.validate(req.body)
+  if (error) return res.status(400).json({ error: error.details[0].message })
 
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const { username, password } = req.body
+  const user = await User.findOne({ name: username })
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' })
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid credentials" });
-  }
+  const match = await bcrypt.compare(password, user.passwordHash)
+  if (!match) return res.status(401).json({ error: 'Invalid credentials' })
 
-  // NOTE: In a real app, you'd compare hashed passwords
-  // For example: bcrypt.compare(password, user.passwordHash)
-  if (user.password !== password) {
-    return res.status(401).json({ error: "Invalid credentials" });
-  }
+  const token = generateToken(user._id)
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict',
+    maxAge: 24*60*60*1000,
+  })
 
-  // On success, generate a token:
-  const token = generateToken(user._id);
-
-  // Return token (and user data) to the client
   res.json({
     _id: user._id,
     name: user.name,
-    username: user.username,
-    token,
-  });
-});
+    privacy: user.privacy,
+    message: 'Logged in successfully',
+  })})
 
 /**
  * @desc   "Logout" user
  * @route  GET /logout
  */
 const logoutUser = asyncHandler(async (req, res) => {
-  // With JWT, there's no truly "server-side" logout if stateless
-  // We can instruct the client to delete its stored token
-  // or we can use a token blacklist in a real scenario.
-  res.json({ message: "User logged out (client must discard token)" });
-});
+  res.clearCookie('token', { sameSite: 'Strict', secure: process.env.NODE_ENV === 'production' })
+  res.json({ message: 'Logged out' })
+})
 
 /**
  * @desc   Get messages to display in /user
@@ -260,4 +286,5 @@ export  {
   addMessageToUser,
   aboutProject,
   privacyPage,
+  signup
 };

@@ -1,44 +1,152 @@
 import './index.scss'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const User = () => {
-  const [user] = useState({
-    name: 'User Name',
-    email: 'user@email.com',
-    avatar: '../../assets/images/logo.png',
-    questions: [
-      { id: 1, title: 'How do I deploy a React app?', status: 'Answered' },
-      { id: 2, title: 'What is the best way to learn TypeScript?', status: 'Open' },
-      { id: 3, title: 'How to fix CORS issues?', status: 'Closed' },
-    ],
-  })
+const host = process.env.REACT_APP_BACKEND ?? 'http://localhost:5000'
+
+export default function User () {
+  const [user, setUser] = useState(null)      
+  const [section, setSection] = useState('questions')
+  const [statusDraft, setStatusDraft] = useState('')
+  const [privacyDraft, setPrivacyDraft] = useState('public')
+  const [items, setItems] = useState([])      
+  const [loadingItems, setLoadingItems] = useState(false)
+
+  /* ---------------- profile ---------------- */
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch(`${host}/user`, { credentials: 'include' })
+        if (!res.ok) throw new Error()
+        const data = await res.json()
+        setUser(data)
+        setStatusDraft(data.status ?? '')
+        setPrivacyDraft(data.privacy ?? 'public')
+      } catch {
+        setUser(false)
+      }
+    })()
+  }, [])
+
+  /* --------------- questions --------------- */
+  useEffect(() => {
+    if (section !== 'questions' || !user?._id) return
+    setLoadingItems(true)
+    fetch(`${host}/user/getM`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+      .then(r => r.json())
+      .then(setItems)
+      .catch(() => setItems([]))
+      .finally(() => setLoadingItems(false))
+  }, [section, user])
+
+  /* ---------------- actions ---------------- */
+  const logout = async () => {
+    await fetch(`${host}/logout`, { method: 'POST', credentials: 'include' })
+    window.location.reload()
+  }
+
+  const saveStatus = async () => {
+    await fetch(`${host}/user/status`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: statusDraft }),
+    })
+    setUser({ ...user, status: statusDraft })
+  }
+
+  const savePrivacy = async () => {
+    await fetch(`${host}/user/privacy`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ privacySetting: privacyDraft }),
+    })
+    setUser({ ...user, privacy: privacyDraft })
+  }
+
+  /* ---------------- render ----------------- */
+  if (user === null) return <div className="loading">Loading…</div>
+  if (user === false) return <div className="login-placeholder">Please log in.</div>
 
   return (
     <div className="container user-page">
       <aside className="sidebar">
-        <img src={user.avatar} alt="User" className="user" />
+        <img
+          src={user.profilePicture || user.avatar || '/avatar.svg'}
+          alt="User"
+          className="avatar"
+        />
         <h2>{user.name}</h2>
-        <p>{user.email}</p>
+        {user.email && <p>{user.email}</p>}
         <nav className="menu">
-          <button>My Questions</button>
-          <button>Settings</button>
-          <button>Log Out</button>
+          <button
+            className={section === 'questions' ? 'active' : ''}
+            onClick={() => setSection('questions')}
+          >
+            My Questions
+          </button>
+          <button
+            className={section === 'settings' ? 'active' : ''}
+            onClick={() => setSection('settings')}
+          >
+            Settings
+          </button>
+          <button onClick={logout}>Log Out</button>
         </nav>
       </aside>
 
       <main className="main-content">
-        <h1>My Questions</h1>
-        <ul className="question-list">
-          {user.questions.map((q) => (
-            <li key={q.id} className="question-item">
-              <h3>{q.title}</h3>
-              <span className={`status ${q.status.toLowerCase()}`}>{q.status}</span>
-            </li>
-          ))}
-        </ul>
+        {section === 'questions' && (
+          <>
+            <h1>My Questions</h1>
+            {loadingItems && <p>Loading…</p>}
+            <ul className="question-list">
+              {(items.length ? items : user.questions || []).map(q => (
+                <li key={q._id || q.id} className="question-item">
+                  <h3>{q.title || q.content}</h3>
+                  <span className={`status ${(q.status || 'open').toLowerCase()}`}>
+                    {q.status || 'Open'}
+                  </span>
+                </li>
+              ))}
+              {!loadingItems && (items.length === 0 && (!user.questions || user.questions.length === 0)) && (
+                <p>No questions yet.</p>
+              )}
+            </ul>
+          </>
+        )}
+
+        {section === 'settings' && (
+          <>
+            <h1>Settings</h1>
+            <div className="settings-block">
+              <label>Status</label>
+              <textarea
+                value={statusDraft}
+                onChange={e => setStatusDraft(e.target.value)}
+              />
+              <button onClick={saveStatus}>Save status</button>
+            </div>
+            <div className="settings-block">
+              <label>Privacy</label>
+              <select
+                value={privacyDraft}
+                onChange={e => setPrivacyDraft(e.target.value)}
+              >
+                <option value="public">Public</option>
+                <option value="friends">Friends</option>
+                <option value="private">Private</option>
+              </select>
+              <button onClick={savePrivacy}>Save privacy</button>
+            </div>
+          </>
+        )}
       </main>
     </div>
   )
 }
-
-export default User

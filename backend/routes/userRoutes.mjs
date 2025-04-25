@@ -2,7 +2,7 @@
 import { Router } from "express";
 const router = Router();
 import { protect } from "../middleware/authMiddleware.mjs";
-import { getMainPage, getUserProfile, getUserInterface, loginForm, loginUser, logoutUser, getUserMessages, refuseMessage, replayMessage, addProfilePicture, addStatus, setPrivacy, addMessageToUser, aboutProject, privacyPage } from "../controllers/userController.mjs";
+import { getMainPage, getUserProfile, getUserInterface, signup,  loginForm, loginUser, logoutUser, getUserMessages, refuseMessage, replayMessage, addProfilePicture, addStatus, setPrivacy, addMessageToUser, aboutProject, privacyPage } from "../controllers/userController.mjs";
 
 // Public routes
 router.get("/", getMainPage);
@@ -17,6 +17,7 @@ router.get("/user/:name", getUserInterface);
 
 // Protected routes
 router.get("/user", protect, getUserProfile);
+router.get("/signup", signup);
 router.post("/user/getM", protect, getUserMessages);
 router.post("/user/refuse", protect, refuseMessage);
 router.post("/user/replay", protect, replayMessage);
