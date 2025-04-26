@@ -227,8 +227,11 @@ developers.
 
 ## Env
 
-process.env.DEBUG process.env.JWT_SECRET process.env.JWT_BAKEND
-process.env.FRONTEND process.env.NODE_ENV process.env.MONGO_URI
+```
+REACT_APP_BACKEND=http://localhost:5000
+FRONTEND = "http://localhost:3000"
+```
+
 
 ## Deployment
 

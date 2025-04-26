@@ -5,7 +5,7 @@ import { loginSchema, messageSchema } from "../validators/validators.mjs";
 
 /**
  * @desc   Login interface
- * @route  GET /login
+ * @route  POST /signup
  */
 const loginForm = asyncHandler(async (req, res) => {
   // Show a login form or return JSON message
@@ -13,6 +13,7 @@ const loginForm = asyncHandler(async (req, res) => {
 });
 
 const signup = asyncHandler(async (req, res) => {
+  console.log(req.body)
   const { error, value } = signupSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 

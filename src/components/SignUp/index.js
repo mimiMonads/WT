@@ -1,8 +1,8 @@
 import "./index.scss";
 import { useState } from "react";
 import { ArrowLeft, UserPlus } from "lucide-react";
+import { HOST } from "../../links";
 
-const host = "https://api.tripleequal.dev";
 
 export default function SignUp({ onSuccess, onCancel }) {
   const [form, setForm] = useState({
@@ -18,12 +18,13 @@ export default function SignUp({ onSuccess, onCancel }) {
   const update = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value });
 
+  console.log(form)
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const res = await fetch(`${host}/login`, {
+      const res = await fetch(`${HOST}/signup`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
