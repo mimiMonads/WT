@@ -1,193 +1,148 @@
-/**
- * routes.test.js
- *
- * A comprehensive test suite covering both userRoutes and messageRoutes.
- * We mock Mongoose model calls but use a valid JWT generated with jsonwebtoken.
- */
+// test/routes.test.mjs
 
-process.env.JWT_SECRET = "testsecret"; // Ensure the secret is set for tests
+import { describe, it, expect, beforeEach, mock } from "bun:test";
+import request from "supertest";
+import express from "express";
+import jwt from "jsonwebtoken";
 
-const request = require("supertest");
-const express = require("express");
-const jwt = require("jsonwebtoken");
-
-
-// Mock out the models so they don’t talk to a real DB
-jest.mock("../backend/models/models.js", () => ({
+// 1. Mock the models module before importing any code that uses it
+mock.module("../backend/models/models.mjs", () => ({
   User: {
-    findOne: jest.fn(),
-    findById: jest.fn(),
-    create: jest.fn(),
-    find: jest.fn(),
+    findOne: mock(() => Promise.resolve(null)),
+    findById: mock(() => Promise.resolve(null)),
+    create: mock(() => Promise.resolve({})),
+    find: mock(() => Promise.resolve([])),
   },
   Message: {
-    find: jest.fn(),
-    findById: jest.fn(),
-    create: jest.fn(),
-    findOne: jest.fn(),
+    find: mock(() => Promise.resolve([])),
+    findById: mock(() => Promise.resolve(null)),
+    create: mock(() => Promise.resolve({})),
+    findOne: mock(() => Promise.resolve(null)),
   },
 }));
 
-// Do NOT mock jsonwebtoken – we want to use its real implementation.
-const { User, Message } = require("../backend/models/models.js");
+// 2. Now import the mocked exports and your routes
+import { User, Message } from "../backend/models/models.mjs";
+import userRoutes from "../backend/routes/userRoutes.mjs";
+import messageRoutes from "../backend/routes/messageRoutes.mjs";
 
-// Our route modules
-const userRoutes = require("../backend/routes/userRoutes.js");
-const messageRoutes = require("../backend/routes/messageRoutes.js");
-
-// Create an Express app for testing
+// 3. Express app setup
+process.env.JWT_SECRET = "testsecret";
 const app = express();
 app.use(express.json());
 app.use("/", userRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Helper function: create a valid token using the real jwt.sign
+// 4. Helper to generate a real JWT
 function generateValidToken(userId = "mocked-user-id") {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "30d" });
 }
 
+// 5. Reset mocks before each test
+beforeEach(() => {
+  mock.restore();
+});
+
 describe("User Routes", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it("GET / returns 200", async () => {
+    const res = await request(app).get("/");
+    expect(res.status).toBe(200);
   });
 
-  describe("GET /", () => {
-    it("should return main page text", async () => {
-      const res = await request(app).get("/");
-      expect(res.statusCode).toBe(200);
-    });
+  it("GET /login returns 200", async () => {
+    const res = await request(app).get("/login");
+    expect(res.status).toBe(200);
   });
 
-
-  describe("GET /login", () => {
-    it("should return the login form text", async () => {
-      const res = await request(app).get("/login");
-      expect(res.statusCode).toBe(200);
-    });
+  it("GET /logout returns logout message", async () => {
+    const res = await request(app).get("/logout");
+    expect(res.status).toBe(200);
+    expect(res.body.message).toContain("User logged out");
   });
 
-
-  describe("GET /logout", () => {
-    it("should return a logout message", async () => {
-      const res = await request(app).get("/logout");
-      expect(res.statusCode).toBe(200);
-      expect(res.body.message).toContain("User logged out");
-    });
+  it("GET /user/:name returns 404 if user not found", async () => {
+    User.findOne.mockResolvedValueOnce(null);
+    const res = await request(app).get("/user/DoesNotExist");
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty("error");
   });
 
-  describe("GET /user/:name", () => {
-
-    it("should 404 if user not found", async () => {
-      User.findOne.mockResolvedValueOnce(null);
-      const res = await request(app).get("/user/DoesNotExist");
-      expect(res.statusCode).toBe(404);
-      expect(res.body).toHaveProperty("error");
-    });
-  });
-
-
-
-  describe("GET /privacy", () => {
-    it("should return privacy info", async () => {
-      const res = await request(app).get("/privacy");
-      expect(res.statusCode).toBe(200);
-    });
+  it("GET /privacy returns 200", async () => {
+    const res = await request(app).get("/privacy");
+    expect(res.status).toBe(200);
   });
 });
 
 describe("Message Routes", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it("GET /api/messages returns all messages", async () => {
+    Message.find.mockResolvedValueOnce([
+      { _id: "m1", content: "Hello" },
+      { _id: "m2", content: "World" },
+    ]);
+    const res = await request(app).get("/api/messages");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
   });
 
-  describe("GET /api/messages", () => {
-    it("should fetch all messages", async () => {
-      Message.find.mockResolvedValueOnce([
-        { _id: "m1", content: "Hello" },
-        { _id: "m2", content: "World" },
-      ]);
-      const res = await request(app).get("/api/messages");
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveLength(2);
-    });
+  it("POST /api/messages fails when missing fields", async () => {
+    const token = generateValidToken();
+    const res = await request(app)
+      .post("/api/messages")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+    expect(res.status).toBe(500);
   });
 
-  describe("POST /api/messages", () => {
-    let token;
-    beforeEach(() => {
-      token = generateValidToken("mocked-user-id"); 
+  it("GET /api/messages/:id returns message if found", async () => {
+    Message.findById.mockResolvedValueOnce({
+      _id: "m45",
+      content: "Single message test",
     });
-
-    it("should fail if content or sender missing", async () => {
-      const res = await request(app)
-      .post("/api/messages").send({})
-      ;
-      expect(res.statusCode).toBe(500);
-    });
+    const res = await request(app).get("/api/messages/m45");
+    expect(res.status).toBe(200);
+    expect(res.body.content).toBe("Single message test");
   });
 
-  describe("GET /api/messages/:id", () => {
-    it("should get single message by id", async () => {
-      Message.findById.mockResolvedValueOnce({
-        _id: "m45",
-        content: "Single message test",
-      });
-
-      const res = await request(app).get("/api/messages/m45");
-      expect(res.statusCode).toBe(200);
-      expect(res.body.content).toBe("Single message test");
-    });
-
-    it("should return 404 if message not found", async () => {
-      Message.findById.mockResolvedValueOnce(null);
-      const res = await request(app).get("/api/messages/noexists");
-      expect(res.statusCode).toBe(404);
-    });
+  it("GET /api/messages/:id returns 404 if not found", async () => {
+    Message.findById.mockResolvedValueOnce(null);
+    const res = await request(app).get("/api/messages/noexists");
+    expect(res.status).toBe(404);
   });
 
-  describe("PUT /api/messages/:id", () => {
-
-
-    it("should return 404 if not found", async () => {
-      Message.findById.mockResolvedValueOnce(null);
-      const res = await request(app)
-        .put("/api/messages/badID")
-        .send({ content: "Updated content" });
-      expect(res.statusCode).toBe(404);
-    });
+  it("PUT /api/messages/:id returns 404 if not found", async () => {
+    Message.findById.mockResolvedValueOnce(null);
+    const res = await request(app)
+      .put("/api/messages/badID")
+      .send({ content: "Updated content" });
+    expect(res.status).toBe(404);
   });
 
-  describe("DELETE /api/messages/:id", () => {
-    it("should delete a message by id", async () => {
-      const mockDoc = {
-        _id: "m-del",
-        deleteOne: jest.fn().mockResolvedValueOnce(true),
-      };
-      Message.findById.mockResolvedValueOnce(mockDoc);
-
-      const res = await request(app).delete("/api/messages/m-del");
-      expect(res.statusCode).toBe(200);
-      expect(mockDoc.deleteOne).toHaveBeenCalled();
-    });
-
-    it("should return 404 if not found", async () => {
-      Message.findById.mockResolvedValueOnce(null);
-      const res = await request(app).delete("/api/messages/noexists");
-      expect(res.statusCode).toBe(404);
-    });
+  it("DELETE /api/messages/:id deletes message if found", async () => {
+    const mockDoc = {
+      _id: "m-del",
+      deleteOne: mock(() => Promise.resolve(true)),
+    };
+    Message.findById.mockResolvedValueOnce(mockDoc);
+    const res = await request(app).delete("/api/messages/m-del");
+    expect(res.status).toBe(200);
+    expect(mockDoc.deleteOne).toHaveBeenCalled();
   });
 
-  describe("GET /api/messages/search/:query", () => {
-    it("should return messages matching search", async () => {
-      Message.find.mockResolvedValueOnce([
-        { _id: "m300", content: "This is test content" },
-      ]);
-      const res = await request(app).get("/api/messages/search/test");
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toHaveLength(1);
-      expect(Message.find).toHaveBeenCalledWith({
-        content: { $regex: "test", $options: "i" },
-      });
+  it("DELETE /api/messages/:id returns 404 if not found", async () => {
+    Message.findById.mockResolvedValueOnce(null);
+    const res = await request(app).delete("/api/messages/noexists");
+    expect(res.status).toBe(404);
+  });
+
+  it("GET /api/messages/search/:query returns matching messages", async () => {
+    Message.find.mockResolvedValueOnce([
+      { _id: "m300", content: "This is test content" },
+    ]);
+    const res = await request(app).get("/api/messages/search/test");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(Message.find).toHaveBeenCalledWith({
+      content: { $regex: "test", $options: "i" },
     });
   });
 });
