@@ -1,5 +1,5 @@
-import './index.scss'
-import { NavLink } from 'react-router-dom'
+import "./index.scss";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -8,13 +8,17 @@ const Footer = () => {
         <NavLink activeClassName="active" to="/about">
           ABOUT
         </NavLink>
-        
-        <NavLink activeClassName="active" className="privacy" to="/privacy-policy">
+
+        <NavLink
+          activeClassName="active"
+          className="privacy"
+          to="/privacy-policy"
+        >
           PRIVACY POLICY
         </NavLink>
       </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

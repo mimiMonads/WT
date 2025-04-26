@@ -1,44 +1,45 @@
-import './index.scss'
-import { useState } from 'react'
-import { ArrowLeft, UserPlus } from 'lucide-react'
+import "./index.scss";
+import { useState } from "react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 
-const host =  'https://api.tripleequal.dev'
+const host = "https://api.tripleequal.dev";
 
 export default function SignUp({ onSuccess, onCancel }) {
   const [form, setForm] = useState({
-    name: '',
-    password: '',
-    profilePicture: '',
-    status: '',
-    privacy: 'public',
-  })
-  const [error, setError] = useState('')
-  const [busy, setBusy] = useState(false)
+    name: "",
+    password: "",
+    profilePicture: "",
+    status: "",
+    privacy: "public",
+  });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
+  const update = (field) => (e) =>
+    setForm({ ...form, [field]: e.target.value });
 
   const submit = async (e) => {
-    e.preventDefault()
-    setBusy(true)
-    setError('')
+    e.preventDefault();
+    setBusy(true);
+    setError("");
     try {
       const res = await fetch(`${host}/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      })
-      
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Signup failed'  + res)
-      onSuccess?.(data)
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Signup failed" + res);
+      onSuccess?.(data);
     } catch (err) {
-      console.error(err)
-      setError(err.message)
+      console.error(err);
+      setError(err.message);
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
-  }
+  };
 
   return (
     <div className="signin-page">
@@ -51,7 +52,12 @@ export default function SignUp({ onSuccess, onCancel }) {
               type="button"
               onClick={onCancel}
               className="flat-button"
-              style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}
+              style={{
+                marginBottom: "20px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
             >
               <ArrowLeft size={16} /> Back
             </button>
@@ -62,7 +68,7 @@ export default function SignUp({ onSuccess, onCancel }) {
             <input
               id="name"
               value={form.name}
-              onChange={update('name')}
+              onChange={update("name")}
               required
               placeholder="jane_doe"
             />
@@ -72,7 +78,7 @@ export default function SignUp({ onSuccess, onCancel }) {
               id="password"
               type="password"
               value={form.password}
-              onChange={update('password')}
+              onChange={update("password")}
               required
             />
 
@@ -80,7 +86,7 @@ export default function SignUp({ onSuccess, onCancel }) {
             <input
               id="profile"
               value={form.profilePicture}
-              onChange={update('profilePicture')}
+              onChange={update("profilePicture")}
               placeholder="https://..."
             />
 
@@ -88,12 +94,16 @@ export default function SignUp({ onSuccess, onCancel }) {
             <input
               id="status"
               value={form.status}
-              onChange={update('status')}
+              onChange={update("status")}
               placeholder="Hello there!"
             />
 
             <label htmlFor="privacy">Privacy</label>
-            <select id="privacy" value={form.privacy} onChange={update('privacy')}>
+            <select
+              id="privacy"
+              value={form.privacy}
+              onChange={update("privacy")}
+            >
               <option value="public">Public</option>
               <option value="friends">Friends</option>
               <option value="private">Private</option>
@@ -102,11 +112,11 @@ export default function SignUp({ onSuccess, onCancel }) {
             {error && <div className="error-message">{error}</div>}
 
             <button type="submit" className="flat-button" disabled={busy}>
-              <UserPlus size={18} /> {busy ? 'Signing up…' : 'Sign up'}
+              <UserPlus size={18} /> {busy ? "Signing up…" : "Sign up"}
             </button>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

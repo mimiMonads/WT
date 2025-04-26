@@ -1,13 +1,13 @@
 // test/validators.test.mjs
 
-import { describe, test, expect, beforeEach, mock } from "bun:test";
+import { beforeEach, describe, expect, mock, test } from "bun:test";
 
 import {
-  validateUser,
   validateLogin,
   validateMessage,
-  validateReply,
   validatePost,
+  validateReply,
+  validateUser,
 } from "../backend/validators/validators.mjs";
 
 describe("Validator Middleware", () => {
@@ -51,9 +51,9 @@ describe("Validator Middleware", () => {
 
     test("fails with invalid input", () => {
       req.body = {
-        name: "ab",        // too short
-        password: "",      // required
-        privacy: "unknown" // invalid option
+        name: "ab", // too short
+        password: "", // required
+        privacy: "unknown", // invalid option
       };
       validateUser(req, res, next);
       expect(res.status).toHaveBeenCalledWith(400);
@@ -74,7 +74,7 @@ describe("Validator Middleware", () => {
 
     test("fails with invalid input", () => {
       req.body = {
-        to: "",  // required
+        to: "", // required
         body: "", // empty
       };
       validateMessage(req, res, next);
@@ -95,13 +95,12 @@ describe("Validator Middleware", () => {
 
     test("fails with invalid input", () => {
       req.body = {
-        message: "",  // missing
-        user: "",     // missing
+        message: "", // missing
+        user: "", // missing
         replyText: "", // too short
       };
       validateReply(req, res, next);
       expect(res.status).toHaveBeenCalledWith(400);
-
     });
   });
 

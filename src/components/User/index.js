@@ -1,83 +1,85 @@
-import './index.scss'
-import { useEffect, useState } from 'react'
+import "./index.scss";
+import { useEffect, useState } from "react";
 
-const host =  'https://api.tripleequal.dev'
+const host = "https://api.tripleequal.dev";
 
-export default function User () {
-  const [user, setUser] = useState(null)      
-  const [section, setSection] = useState('questions')
-  const [statusDraft, setStatusDraft] = useState('')
-  const [privacyDraft, setPrivacyDraft] = useState('public')
-  const [items, setItems] = useState([])      
-  const [loadingItems, setLoadingItems] = useState(false)
+export default function User() {
+  const [user, setUser] = useState(null);
+  const [section, setSection] = useState("questions");
+  const [statusDraft, setStatusDraft] = useState("");
+  const [privacyDraft, setPrivacyDraft] = useState("public");
+  const [items, setItems] = useState([]);
+  const [loadingItems, setLoadingItems] = useState(false);
 
   /* ---------------- profile ---------------- */
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
-        const res = await fetch(`${host}/user`, { credentials: 'include' })
-        if (!res.ok) throw new Error()
-        const data = await res.json()
-        setUser(data)
-        setStatusDraft(data.status ?? '')
-        setPrivacyDraft(data.privacy ?? 'public')
+        const res = await fetch(`${host}/user`, { credentials: "include" });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setUser(data);
+        setStatusDraft(data.status ?? "");
+        setPrivacyDraft(data.privacy ?? "public");
       } catch {
-        setUser(false)
+        setUser(false);
       }
-    })()
-  }, [])
+    })();
+  }, []);
 
   /* --------------- questions --------------- */
   useEffect(() => {
-    if (section !== 'questions' || !user?._id) return
-    setLoadingItems(true)
+    if (section !== "questions" || !user?._id) return;
+    setLoadingItems(true);
     fetch(`${host}/user/getM`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     })
-      .then(r => r.json())
+      .then((r) => r.json())
       .then(setItems)
       .catch(() => setItems([]))
-      .finally(() => setLoadingItems(false))
-  }, [section, user])
+      .finally(() => setLoadingItems(false));
+  }, [section, user]);
 
   /* ---------------- actions ---------------- */
   const logout = async () => {
-    await fetch(`${host}/logout`, { method: 'POST', credentials: 'include' })
-    window.location.reload()
-  }
+    await fetch(`${host}/logout`, { method: "POST", credentials: "include" });
+    window.location.reload();
+  };
 
   const saveStatus = async () => {
     await fetch(`${host}/user/status`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: statusDraft }),
-    })
-    setUser({ ...user, status: statusDraft })
-  }
+    });
+    setUser({ ...user, status: statusDraft });
+  };
 
   const savePrivacy = async () => {
     await fetch(`${host}/user/privacy`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ privacySetting: privacyDraft }),
-    })
-    setUser({ ...user, privacy: privacyDraft })
-  }
+    });
+    setUser({ ...user, privacy: privacyDraft });
+  };
 
   /* ---------------- render ----------------- */
-  if (user === null) return <div className="loading">Loading…</div>
-  if (user === false) return <div className="login-placeholder">Please log in.</div>
+  if (user === null) return <div className="loading">Loading…</div>;
+  if (user === false) {
+    return <div className="login-placeholder">Please log in.</div>;
+  }
 
   return (
     <div className="container user-page">
       <aside className="sidebar">
         <img
-          src={user.profilePicture || user.avatar || '/avatar.svg'}
+          src={user.profilePicture || user.avatar || "/avatar.svg"}
           alt="User"
           className="avatar"
         />
@@ -85,14 +87,14 @@ export default function User () {
         {user.email && <p>{user.email}</p>}
         <nav className="menu">
           <button
-            className={section === 'questions' ? 'active' : ''}
-            onClick={() => setSection('questions')}
+            className={section === "questions" ? "active" : ""}
+            onClick={() => setSection("questions")}
           >
             My Questions
           </button>
           <button
-            className={section === 'settings' ? 'active' : ''}
-            onClick={() => setSection('settings')}
+            className={section === "settings" ? "active" : ""}
+            onClick={() => setSection("settings")}
           >
             Settings
           </button>
@@ -101,34 +103,37 @@ export default function User () {
       </aside>
 
       <main className="main-content">
-        {section === 'questions' && (
+        {section === "questions" && (
           <>
             <h1>My Questions</h1>
             {loadingItems && <p>Loading…</p>}
             <ul className="question-list">
-              {(items.length ? items : user.questions || []).map(q => (
+              {(items.length ? items : user.questions || []).map((q) => (
                 <li key={q._id || q.id} className="question-item">
                   <h3>{q.title || q.content}</h3>
-                  <span className={`status ${(q.status || 'open').toLowerCase()}`}>
-                    {q.status || 'Open'}
+                  <span
+                    className={`status ${(q.status || "open").toLowerCase()}`}
+                  >
+                    {q.status || "Open"}
                   </span>
                 </li>
               ))}
-              {!loadingItems && (items.length === 0 && (!user.questions || user.questions.length === 0)) && (
-                <p>No questions yet.</p>
-              )}
+              {!loadingItems &&
+                (items.length === 0 &&
+                  (!user.questions || user.questions.length === 0)) &&
+                <p>No questions yet.</p>}
             </ul>
           </>
         )}
 
-        {section === 'settings' && (
+        {section === "settings" && (
           <>
             <h1>Settings</h1>
             <div className="settings-block">
               <label>Status</label>
               <textarea
                 value={statusDraft}
-                onChange={e => setStatusDraft(e.target.value)}
+                onChange={(e) => setStatusDraft(e.target.value)}
               />
               <button onClick={saveStatus}>Save status</button>
             </div>
@@ -136,7 +141,7 @@ export default function User () {
               <label>Privacy</label>
               <select
                 value={privacyDraft}
-                onChange={e => setPrivacyDraft(e.target.value)}
+                onChange={(e) => setPrivacyDraft(e.target.value)}
               >
                 <option value="public">Public</option>
                 <option value="friends">Friends</option>
@@ -148,5 +153,5 @@ export default function User () {
         )}
       </main>
     </div>
-  )
+  );
 }

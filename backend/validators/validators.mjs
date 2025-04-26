@@ -1,6 +1,5 @@
-
 //@ts-ignore
-import Joi from 'joi';
+import Joi from "joi";
 
 // Reusable middleware creator
 const validate = (schema) => {
@@ -25,9 +24,9 @@ const validate = (schema) => {
 const userSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
   password: Joi.string().required(),
-  profilePicture: Joi.string().optional().allow(''),
-  status: Joi.string().optional().allow(''),
-  privacy: Joi.string().valid('public', 'friends', 'private').optional()
+  profilePicture: Joi.string().optional().allow(""),
+  status: Joi.string().optional().allow(""),
+  privacy: Joi.string().valid("public", "friends", "private").optional(),
 });
 
 /**
@@ -37,7 +36,7 @@ const userSchema = Joi.object({
  */
 const loginSchema = Joi.object({
   name: Joi.string().required(),
-  password: Joi.string().required()
+  password: Joi.string().required(),
 });
 
 /**
@@ -53,9 +52,9 @@ const loginSchema = Joi.object({
  */
 const messageSchema = Joi.object({
   to: Joi.string().required(),
-  from: Joi.string().optional().allow(''), // defaults to 'Anonymous'
+  from: Joi.string().optional().allow(""), // defaults to 'Anonymous'
   body: Joi.string().min(1).max(1000).required(),
-  replied: Joi.boolean().optional()
+  replied: Joi.boolean().optional(),
 });
 
 /**
@@ -68,7 +67,7 @@ const messageSchema = Joi.object({
 const replySchema = Joi.object({
   message: Joi.string().required(),
   user: Joi.string().required(),
-  replyText: Joi.string().min(1).max(1000).required()
+  replyText: Joi.string().min(1).max(1000).required(),
 });
 
 /**
@@ -81,16 +80,16 @@ const replySchema = Joi.object({
 const postSchema = Joi.object({
   title: Joi.string().min(3).max(100).required(),
   body: Joi.string().min(10).required(),
-  tags: Joi.array().items(Joi.string()).optional()
+  tags: Joi.array().items(Joi.string()).optional(),
 });
 
-const exp =  {
+const exp = {
   // Reuse your validate function with each schema as needed
   validateUser: validate(userSchema),
   validateLogin: validate(loginSchema),
   validateMessage: validate(messageSchema),
   validateReply: validate(replySchema),
-  validatePost: validate(postSchema)
+  validatePost: validate(postSchema),
 };
 
 export const validateUser = validate(userSchema);
@@ -99,10 +98,4 @@ export const validateMessage = validate(messageSchema);
 export const validateReply = validate(replySchema);
 export const validatePost = validate(postSchema);
 
-export {
-  userSchema,
-  loginSchema,
-  messageSchema,
-  replySchema,
-  postSchema
-};
+export { loginSchema, messageSchema, postSchema, replySchema, userSchema };

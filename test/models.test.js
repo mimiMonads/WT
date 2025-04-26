@@ -1,6 +1,6 @@
 // models.test.js
-import { describe, it, expect, vi } from "bun:test";
-import { User, Message, Reply, Post } from "../backend/models/models.mjs";
+import { describe, expect, it, vi } from "bun:test";
+import { Message, Post, Reply, User } from "../backend/models/models.mjs";
 
 describe("Mongoose Models Mocking with Bun", () => {
   describe("User Model", () => {

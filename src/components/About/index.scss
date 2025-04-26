@@ -8,7 +8,7 @@
   right: 0;
   overflow: hidden;
 }
-  
+
 .cubespinner {
   animation-name: spincube;
   animation-timing-function: ease-in-out;
@@ -17,7 +17,7 @@
   transform-style: preserve-3d;
   transform-origin: 100px 100px 0;
   margin-left: calc(50% - 100px);
-  
+
   div {
     position: absolute;
     width: 200px;
@@ -31,33 +31,33 @@
     align-items: center;
     box-shadow: 0 0 20px 0px #3333cc;
   }
-  
-    .face1 {
-      transform: translateZ(100px);
-      color: #3333cc;
-    }
-    .face2 {
-      transform: rotateY(90deg) translateZ(100px);
-      color: #3333cc;
-    }
-    .face3 {
-      transform: rotateY(90deg) rotateX(90deg) translateZ(100px);
-      color: #3333cc;
-    }
-    .face4 {
-      transform: rotateY(180deg) rotateZ(90deg) translateZ(100px);
-      color: #3333cc;
-    }
-    .face5 {
-      transform: rotateY(-90deg) rotateZ(90deg) translateZ(100px);
-      color: #3333cc;
-    }
-    .face6 {
-      transform: rotateX(-90deg) translateZ(100px);
-      color: #3333cc;
-    }
+
+  .face1 {
+    transform: translateZ(100px);
+    color: #3333cc;
   }
-  
+  .face2 {
+    transform: rotateY(90deg) translateZ(100px);
+    color: #3333cc;
+  }
+  .face3 {
+    transform: rotateY(90deg) rotateX(90deg) translateZ(100px);
+    color: #3333cc;
+  }
+  .face4 {
+    transform: rotateY(180deg) rotateZ(90deg) translateZ(100px);
+    color: #3333cc;
+  }
+  .face5 {
+    transform: rotateY(-90deg) rotateZ(90deg) translateZ(100px);
+    color: #3333cc;
+  }
+  .face6 {
+    transform: rotateX(-90deg) translateZ(100px);
+    color: #3333cc;
+  }
+}
+
 @keyframes spincube {
   from,
   to {
@@ -81,31 +81,30 @@
 }
 
 @media (max-width: 600px) {
-  .container{
+  .container {
     display: flex;
     flex-direction: column;
     align-content: center;
     overflow: visible;
   }
-    
+
   .stage-cube-cont {
-    position: static; 
-    margin-top: 2rem; 
+    position: static;
+    margin-top: 2rem;
     width: 100%;
     height: auto;
     display: flex;
     justify-content: center;
-    }
-  
+  }
+
   .cubespinner {
     transform: scale(0.8);
     margin: 0 auto;
     transform-origin: 50px 50px 0;
   }
-  
+
   .cubespinner div {
     width: 100px;
     height: 100px;
   }
 }
-  

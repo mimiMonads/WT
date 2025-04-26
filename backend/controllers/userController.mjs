@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.mjs";
-import { User, Message } from "../models/models.mjs";
+import { Message, User } from "../models/models.mjs";
 import { loginSchema, messageSchema } from "../validators/validators.mjs";
 
 /**
@@ -12,60 +12,61 @@ const loginForm = asyncHandler(async (req, res) => {
   res.send("Login interface (GET)");
 });
 
-
-
 const signup = asyncHandler(async (req, res) => {
-  const { error, value } = signupSchema.validate(req.body)
-  if (error) return res.status(400).json({ error: error.details[0].message })
+  const { error, value } = signupSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const existing = await User.findOne({ name: value.name })
-  if (existing) return res.status(409).json({ error: 'Username already taken' })
+  const existing = await User.findOne({ name: value.name });
+  if (existing) {
+    return res.status(409).json({ error: "Username already taken" });
+  }
 
-  const passwordHash = await bcrypt.hash(value.password, 10)
-  const newUser = await User.create({ 
-    name: value.name, 
+  const passwordHash = await bcrypt.hash(value.password, 10);
+  const newUser = await User.create({
+    name: value.name,
     passwordHash,
     profilePicture: value.profilePicture,
     status: value.status,
     privacy: value.privacy,
-  })
+  });
 
-  const token = generateToken(newUser._id)
-  res.cookie('token', token, {
+  const token = generateToken(newUser._id);
+  res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Strict',
-    maxAge: 24*60*60*1000,
-  })
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
 
   res.status(201).json({
     _id: newUser._id,
     name: newUser.name,
     privacy: newUser.privacy,
-    message: 'Account created and logged in',
-  })})
+    message: "Account created and logged in",
+  });
+});
 
 /**
  * @desc   Login user & return JWT
  * @route  POST /login
  */
 const loginUser = asyncHandler(async (req, res) => {
-  const { error } = loginSchema.validate(req.body)
-  if (error) return res.status(400).json({ error: error.details[0].message })
+  const { error } = loginSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const { username, password } = req.body
-  const user = await User.findOne({ name: username })
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' })
+  const { username, password } = req.body;
+  const user = await User.findOne({ name: username });
+  if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-  const match = await bcrypt.compare(password, user.passwordHash)
-  if (!match) return res.status(401).json({ error: 'Invalid credentials' })
+  const match = await bcrypt.compare(password, user.passwordHash);
+  if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
-  const token = generateToken(user._id)
-  res.cookie('token', token, {
+  const token = generateToken(user._id);
+  res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None',  
-    domain: '.tripleequal.dev', 
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+    domain: ".tripleequal.dev",
     maxAge: 24 * 60 * 60 * 1000,
   });
 
@@ -73,17 +74,21 @@ const loginUser = asyncHandler(async (req, res) => {
     _id: user._id,
     name: user.name,
     privacy: user.privacy,
-    message: 'Logged in successfully',
-  })})
+    message: "Logged in successfully",
+  });
+});
 
 /**
  * @desc   "Logout" user
  * @route  GET /logout
  */
 const logoutUser = asyncHandler(async (req, res) => {
-  res.clearCookie('token', { sameSite: 'Strict', secure: process.env.NODE_ENV === 'production' })
-  res.json({ message: 'Logged out' })
-})
+  res.clearCookie("token", {
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.json({ message: "Logged out" });
+});
 
 /**
  * @desc   Get messages to display in /user
@@ -220,14 +225,12 @@ const getMainPage = asyncHandler(async (req, res) => {
  * @route  GET /user
  */
 const getUserProfile = asyncHandler(async (req, res) => {
-
- 
-  try{
-     user = await User.findById(req.user._id);
-  } catch(e){
-    user = null
+  try {
+    user = await User.findById(req.user._id);
+  } catch (e) {
+    user = null;
   }
- 
+
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
@@ -237,17 +240,17 @@ const getUserProfile = asyncHandler(async (req, res) => {
 /**
  * @desc   User interface (by name)
  * @route  GET /user/:name
- * 
- * This one might or might not require JWT. 
+ *
+ * This one might or might not require JWT.
  * It’s public read-only here, so we skip `protect`.
  */
 const getUserInterface = asyncHandler(async (req, res) => {
   const userName = req.params.name;
-  let user 
-  try{
-    user = await User.findOne({ name: userName }).select("-password"); 
+  let user;
+  try {
+    user = await User.findOne({ name: userName }).select("-password");
   } catch {
-    user = null
+    user = null;
   }
   if (!user) {
     return res.status(404).json({ error: "User not found" });
@@ -271,21 +274,21 @@ const privacyPage = (req, res) => {
   res.send("Privacy information...");
 };
 
-export  {
+export {
+  aboutProject,
+  addMessageToUser,
+  addProfilePicture,
+  addStatus,
   getMainPage,
-  getUserProfile,
   getUserInterface,
+  getUserMessages,
+  getUserProfile,
   loginForm,
   loginUser,
   logoutUser,
-  getUserMessages,
+  privacyPage,
   refuseMessage,
   replayMessage,
-  addProfilePicture,
-  addStatus,
   setPrivacy,
-  addMessageToUser,
-  aboutProject,
-  privacyPage,
-  signup
+  signup,
 };

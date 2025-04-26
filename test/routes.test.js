@@ -1,6 +1,6 @@
 // test/routes.test.mjs
 
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import request from "supertest";
 import express from "express";
 import jwt from "jsonwebtoken";
@@ -22,7 +22,7 @@ mock.module("../backend/models/models.mjs", () => ({
 }));
 
 // 2. Now import the mocked exports and your routes
-import { User, Message } from "../backend/models/models.mjs";
+import { Message, User } from "../backend/models/models.mjs";
 import userRoutes from "../backend/routes/userRoutes.mjs";
 import messageRoutes from "../backend/routes/messageRoutes.mjs";
 

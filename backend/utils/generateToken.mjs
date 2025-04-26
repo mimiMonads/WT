@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-const sign = jwt.sign
+const sign = jwt.sign;
 
 /**
  * Generate a JWT token using the user's ID as payload.
- * @param {string} userId 
+ * @param {string} userId
  * @returns {string} JWT token
  */
 const generateToken = (userId) => {

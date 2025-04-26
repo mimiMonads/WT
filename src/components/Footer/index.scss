@@ -1,30 +1,29 @@
 .footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    padding: 20px;
-    background-color: #111178;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background-color: #111178;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  color: #3333cc;
+
+  nav {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-    color: #3333cc;
-  
-    nav {
-      display: flex;
-      gap: 30px;
-  
-      a {
-        color: #3333cc;
+    gap: 30px;
+
+    a {
+      color: #3333cc;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+
+      &:hover {
         text-decoration: none;
-        font-size: 16px;
-        font-weight: 500;
-  
-        &:hover {
-          text-decoration: none;
-          color: #ffcc00;
-        }
+        color: #ffcc00;
       }
     }
   }
-  
+}

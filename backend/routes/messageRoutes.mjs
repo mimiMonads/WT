@@ -1,6 +1,13 @@
 import { Router } from "express";
 const router = Router();
-import { getMessages, createMessage, getMessage, updateMessage, deleteMessage, searchMessages } from "../controllers/messageController.mjs";
+import {
+  createMessage,
+  deleteMessage,
+  getMessage,
+  getMessages,
+  searchMessages,
+  updateMessage,
+} from "../controllers/messageController.mjs";
 
 // /api/messages
 router.route("/")

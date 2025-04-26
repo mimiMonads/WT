@@ -18,8 +18,6 @@ const getMessages = asyncHandler(async (req, res) => {
  * @access  Public
  */
 const createMessage = asyncHandler(async (req, res) => {
-  
-
   // Validate request body using your validator
   const { error } = messageSchema.validate(req.body);
   if (error) {
@@ -103,11 +101,11 @@ const searchMessages = asyncHandler(async (req, res) => {
   res.status(200).json(messages);
 });
 
-export  {
-  getMessages,
+export {
   createMessage,
-  getMessage,
-  updateMessage,
   deleteMessage,
+  getMessage,
+  getMessages,
   searchMessages,
+  updateMessage,
 };

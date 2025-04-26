@@ -1,7 +1,4 @@
-
-
-import { Schema, model } from 'mongoose';
-
+import { model, Schema } from "mongoose";
 
 const UserSchema = new Schema({
   name: {
@@ -10,68 +7,66 @@ const UserSchema = new Schema({
     unique: true,
     trim: true,
     minlength: 3,
-    maxlength: 30
+    maxlength: 30,
   },
   password: {
     type: String,
     required: true,
   },
   profilePicture: {
-    type: String, 
-    default: ''
+    type: String,
+    default: "",
   },
   status: {
     type: String,
-    default: ''
+    default: "",
   },
   privacy: {
     type: String,
-    enum: ['public', 'friends', 'private'],
-    default: 'public'
-  }
+    enum: ["public", "friends", "private"],
+    default: "public",
+  },
 }, { timestamps: true });
-
 
 const MessageSchema = new Schema({
   to: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   from: {
     type: String,
-    default: 'Anonymous'
+    default: "Anonymous",
   },
   body: {
     type: String,
     required: true,
     minlength: 1,
-    maxlength: 1000
+    maxlength: 1000,
   },
   replied: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 }, { timestamps: true });
-
 
 const ReplySchema = new Schema({
   message: {
     type: Schema.Types.ObjectId,
-    ref: 'Message',
-    required: true
+    ref: "Message",
+    required: true,
   },
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   replyText: {
     type: String,
     required: true,
     minlength: 1,
-    maxlength: 1000
-  }
+    maxlength: 1000,
+  },
 }, { timestamps: true });
 
 const PostSchema = new Schema({
@@ -80,28 +75,23 @@ const PostSchema = new Schema({
     required: true,
     trim: true,
     minlength: 3,
-    maxlength: 100
+    maxlength: 100,
   },
   body: {
     type: String,
     required: true,
-    minlength: 10
+    minlength: 10,
   },
   tags: [{
     type: String,
-    trim: true
+    trim: true,
   }],
 }, { timestamps: true });
 
 // Create and export models
-const User = model('User', UserSchema);
-const Message = model('Message', MessageSchema);
-const Reply = model('Reply', ReplySchema);
-const Post = model('Post', PostSchema);
+const User = model("User", UserSchema);
+const Message = model("Message", MessageSchema);
+const Reply = model("Reply", ReplySchema);
+const Post = model("Post", PostSchema);
 
-export  {
-  User,
-  Message,
-  Reply,
-  Post
-};
+export { Message, Post, Reply, User };
