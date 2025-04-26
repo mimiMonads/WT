@@ -2,7 +2,7 @@ import './index.scss'
 import { useState } from 'react'
 import { ArrowLeft, UserPlus } from 'lucide-react'
 
-const host = process.env.REACT_APP_BACKEND ?? 'http://localhost:5000'
+const host =  'https://api.tripleequal.dev'
 
 export default function SignUp({ onSuccess, onCancel }) {
   const [form, setForm] = useState({
@@ -28,10 +28,12 @@ export default function SignUp({ onSuccess, onCancel }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
+      console.log(res)
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Signup failed')
+      if (!res.ok) throw new Error(data.error || 'Signup failed'  + res)
       onSuccess?.(data)
     } catch (err) {
+      console.error(err)
       setError(err.message)
     } finally {
       setBusy(false)
