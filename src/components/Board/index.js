@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './index.scss'
 
-const host = process.env.REACT_APP_BACKEND ?? 'http://localhost:5000'
+const host = process?.env?.REACT_APP_BACKEND ?? 'https://api.tripleequal.dev'
 
 /**
  * Board – public wall of messages with create + search.

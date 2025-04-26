@@ -1,7 +1,7 @@
 import './index.scss'
 import { useEffect, useState } from 'react'
 
-const host = process.env.REACT_APP_BACKEND ?? 'http://localhost:5000'
+const host = process?.env?.REACT_APP_BACKEND ?? 'https://api.tripleequal.dev'
 
 export default function User () {
   const [user, setUser] = useState(null)      

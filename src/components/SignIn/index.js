@@ -9,8 +9,8 @@ const SignIn = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
-
-  const host = process.env.REACT_APP_BACKEND ?? 'http://localhost:5000'
+  
+const host = process?.env?.REACT_APP_BACKEND ?? 'https://api.tripleequal.dev'
 
   useEffect(() => {
     const id = setTimeout(() => setLetterClass('text-animate-hover'), 3000)
