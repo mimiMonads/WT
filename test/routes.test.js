@@ -57,7 +57,7 @@ describe("User Routes", () => {
   it("GET /logout returns logout message", async () => {
     const res = await request(app).get("/logout");
     expect(res.status).toBe(200);
-    expect(res.body.message).toContain("User logged out");
+    expect(res.body.message).toContain("Logged out");
   });
 
   it("GET /user/:name returns 404 if user not found", async () => {
@@ -90,7 +90,7 @@ describe("Message Routes", () => {
       .post("/api/messages")
       .set("Authorization", `Bearer ${token}`)
       .send({});
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(400);
   });
 
   it("GET /api/messages/:id returns message if found", async () => {

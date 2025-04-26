@@ -22,13 +22,13 @@ export default function SignUp({ onSuccess, onCancel }) {
     setBusy(true)
     setError('')
     try {
-      const res = await fetch(`${host}/signup`, {
+      const res = await fetch(`${host}/login`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      console.log(res)
+      
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Signup failed'  + res)
       onSuccess?.(data)
