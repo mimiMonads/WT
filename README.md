@@ -232,7 +232,6 @@ REACT_APP_BACKEND=http://localhost:5000
 FRONTEND = "http://localhost:3000"
 ```
 
-
 ## Deployment
 
 [Live Website](https://www.tripleequal.dev/)

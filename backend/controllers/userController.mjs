@@ -1,7 +1,8 @@
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.mjs";
 import { Message, User } from "../models/models.mjs";
-import { loginSchema, messageSchema } from "../validators/validators.mjs";
+import { loginSchema, userSchema } from "../validators/validators.mjs";
+import bcrypt from "bcrypt";
 
 /**
  * @desc   Login interface
@@ -13,8 +14,9 @@ const loginForm = asyncHandler(async (req, res) => {
 });
 
 const signup = asyncHandler(async (req, res) => {
-  console.log(req.body)
-  const { error, value } = signupSchema.validate(req.body);
+  console.log(req.body);
+
+  const { error, value } = userSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   const existing = await User.findOne({ name: value.name });
@@ -22,10 +24,10 @@ const signup = asyncHandler(async (req, res) => {
     return res.status(409).json({ error: "Username already taken" });
   }
 
-  const passwordHash = await bcrypt.hash(value.password, 10);
+  const password = await bcrypt.hash(value.password, 10);
   const newUser = await User.create({
     name: value.name,
-    passwordHash,
+    password,
     profilePicture: value.profilePicture,
     status: value.status,
     privacy: value.privacy,

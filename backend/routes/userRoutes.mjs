@@ -34,7 +34,7 @@ router.get("/user/:name", getUserInterface);
 
 // Protected routes
 router.get("/user", protect, getUserProfile);
-router.get("/signup", signup);
+router.post("/signup", signup);
 router.post("/user/getM", protect, getUserMessages);
 router.post("/user/refuse", protect, refuseMessage);
 router.post("/user/replay", protect, replayMessage);

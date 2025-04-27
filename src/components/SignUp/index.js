@@ -3,7 +3,6 @@ import { useState } from "react";
 import { ArrowLeft, UserPlus } from "lucide-react";
 import { HOST } from "../../links";
 
-
 export default function SignUp({ onSuccess, onCancel }) {
   const [form, setForm] = useState({
     name: "",
@@ -18,7 +17,6 @@ export default function SignUp({ onSuccess, onCancel }) {
   const update = (field) => (e) =>
     setForm({ ...form, [field]: e.target.value });
 
-  console.log(form)
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
@@ -30,8 +28,9 @@ export default function SignUp({ onSuccess, onCancel }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
+      console.warn(res);
       const data = await res.json();
+
       if (!res.ok) throw new Error(data.error || "Signup failed" + res);
       onSuccess?.(data);
     } catch (err) {
