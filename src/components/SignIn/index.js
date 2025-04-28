@@ -2,15 +2,18 @@
 import { useEffect, useState } from "react";
 import AnimatedLetters from "../AnimatedLetters";
 import "./index.scss";
+import { HOST } from "../../links";
+import { useNavigate } from "react-router-dom"; 
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [letterClass, setLetterClass] = useState("text-animate");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const host = "https://api.tripleequal.dev";
+
 
   useEffect(() => {
     const id = setTimeout(() => setLetterClass("text-animate-hover"), 3000);
@@ -20,16 +23,21 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetch(host + "/login", {
+      const resp = await fetch(HOST + "/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ name, password }),
       });
+
       const data = await resp.json();
+
       if (!resp.ok) throw new Error(data.error || "Login failed");
+
       setError("");
       setMessage(data.message);
+      navigate("/user");
+
       // you’re now “logged in”—cookie is set by browser
     } catch (err) {
       setError(err.message);
@@ -49,9 +57,9 @@ const SignIn = () => {
         <form onSubmit={handleSubmit} className="signin-form">
           <label htmlFor="username">Username</label>
           <input
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
 

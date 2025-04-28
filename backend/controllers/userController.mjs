@@ -24,6 +24,7 @@ const signup = asyncHandler(async (req, res) => {
     return res.status(409).json({ error: "Username already taken" });
   }
 
+ 
   const password = await bcrypt.hash(value.password, 10);
   const newUser = await User.create({
     name: value.name,
@@ -57,11 +58,13 @@ const loginUser = asyncHandler(async (req, res) => {
   const { error } = loginSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const { username, password } = req.body;
-  const user = await User.findOne({ name: username });
+  const { name, password } = req.body;
+  
+  const user = await User.findOne({ name});
+
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-  const match = await bcrypt.compare(password, user.passwordHash);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
   const token = generateToken(user._id);

@@ -1,7 +1,7 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
 
-const host = "https://api.tripleequal.dev";
+import { HOST } from "../../links";
 
 export default function User() {
   const [user, setUser] = useState(null);
@@ -15,7 +15,7 @@ export default function User() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${host}/user`, { credentials: "include" });
+        const res = await fetch(`${HOST}/user`, { credentials: "include" });
         if (!res.ok) throw new Error();
         const data = await res.json();
         setUser(data);
@@ -31,7 +31,7 @@ export default function User() {
   useEffect(() => {
     if (section !== "questions" || !user?._id) return;
     setLoadingItems(true);
-    fetch(`${host}/user/getM`, {
+    fetch(`${HOST}/user/getM`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -45,12 +45,12 @@ export default function User() {
 
   /* ---------------- actions ---------------- */
   const logout = async () => {
-    await fetch(`${host}/logout`, { method: "POST", credentials: "include" });
+    await fetch(`${HOST}/logout`, { method: "POST", credentials: "include" });
     window.location.reload();
   };
 
   const saveStatus = async () => {
-    await fetch(`${host}/user/status`, {
+    await fetch(`${HOST}/user/status`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -60,7 +60,7 @@ export default function User() {
   };
 
   const savePrivacy = async () => {
-    await fetch(`${host}/user/privacy`, {
+    await fetch(`${HOST}/user/privacy`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
