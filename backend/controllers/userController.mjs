@@ -59,7 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   const { name, password } = req.body;
-  
+
   const user = await User.findOne({ name});
 
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
@@ -231,6 +231,8 @@ const getMainPage = asyncHandler(async (req, res) => {
  * @route  GET /user
  */
 const getUserProfile = asyncHandler(async (req, res) => {
+  let user
+  
   try {
     user = await User.findById(req.user._id);
   } catch (e) {
