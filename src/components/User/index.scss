@@ -102,3 +102,44 @@
     }
   }
 }
+.share-link {
+  width: 100%;
+  display: flex;
+  margin: 20px 0 25px;
+
+  input {
+    flex: 1;
+    font-size: 13px;
+    padding: 8px;
+    border-radius: 6px 0 0 6px;
+    border: none;
+    background: #fff;
+    color: #000;
+  }
+  button {
+    width: 48px;
+    display: grid;
+    place-items: center;
+    border: none;
+    background: #ffd700;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background 0.2s;
+    &:hover { background: #e6c200; }
+  }
+}
+
+/* inbox action buttons */
+.inbox-actions {
+  display: flex;
+  gap: 10px;
+  button {
+    background: #ffd700;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover { background: #e6c200; }
+  }
+}

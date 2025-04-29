@@ -29,7 +29,7 @@ const protect = asyncHandler(async (req, res, next) => {
           .status(401)
           .json({ error: "Not authorized, user not found" });
       }
-      console.log(user)
+
       req.user = user
       return next();
     } catch (error) {

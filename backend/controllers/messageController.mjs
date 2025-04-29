@@ -3,12 +3,13 @@ import { Message } from "../models/models.mjs";
 import { messageSchema } from "../validators/validators.mjs";
 
 /**
- * @desc    Get all Messages
+ * @desc    Get last 10 messages
  * @route   GET /api/messages
  * @access  Public
  */
 const getMessages = asyncHandler(async (req, res) => {
-  const messages = await Message.find();
+  const messages = await Message.find()
+    .limit(10)
   res.status(200).json(messages);
 });
 

@@ -11,111 +11,134 @@ export default function SignUp({ onSuccess, onCancel }) {
     status: "",
     privacy: "public",
   });
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [showPwd,   setShowPwd]   = useState(false);
+  const [banner,    setBanner]    = useState({ text: "", type: "" }); // error | success
+  const [busy,      setBusy]      = useState(false);
 
   const update = (field) => (e) =>
-    setForm({ ...form, [field]: e.target.value });
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const submit = async (e) => {
     e.preventDefault();
+    setBanner({ text: "", type: "" });
     setBusy(true);
-    setError("");
+
     try {
-      const res = await fetch(`${HOST}/signup`, {
+      const res  = await fetch(`${HOST}/signup`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      console.warn(res);
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Signup failed");
 
-      if (!res.ok) throw new Error(data.error || "Signup failed" + res);
-      onSuccess?.(data);
+      setBanner({ text: data.message, type: "success" });
+      onSuccess?.(data);                    // parent can redirect
     } catch (err) {
+      setBanner({ text: err.message, type: "error" });
       console.error(err);
-      setError(err.message);
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className="signin-page">
-      <div className="signin-content">
-        <div className="text-zone">
-          <h1>Sign&nbsp;Up</h1>
+    <div className="signup-page">
+      <div className="signup-wrapper">
+        <h1 className="title">Sign&nbsp;Up</h1>
 
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flat-button"
-              style={{
-                marginBottom: "20px",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              <ArrowLeft size={16} /> Back
-            </button>
-          )}
+        {onCancel && (
+          <button type="button" onClick={onCancel} className="back-btn">
+            <ArrowLeft size={18} /> Back
+          </button>
+        )}
 
-          <form onSubmit={submit} className="signin-form">
-            <label htmlFor="name">Username</label>
-            <input
-              id="name"
-              value={form.name}
-              onChange={update("name")}
-              required
-              placeholder="jane_doe"
-            />
+        {/* banner */}
+        {banner.text && (
+          <div
+            role="alert"
+            className={`banner ${banner.type}`}
+            onClick={() => setBanner({ text: "", type: "" })}
+          >
+            {banner.text}
+          </div>
+        )}
 
-            <label htmlFor="password">Password</label>
+        <form onSubmit={submit} className="signup-form">
+          {/* username */}
+          <label htmlFor="name">Username</label>
+          <input
+            id="name"
+            value={form.name}
+            onChange={update("name")}
+            required
+            placeholder="jane_doe"
+            autoComplete="username"
+          />
+
+          {/* password + eye */}
+          <label htmlFor="password">Password</label>
+          <div className="password-row">
             <input
               id="password"
-              type="password"
+              type={showPwd ? "text" : "password"}
               value={form.password}
               onChange={update("password")}
               required
+              autoComplete="new-password"
             />
-
-            <label htmlFor="profile">Profile picture URL (optional)</label>
-            <input
-              id="profile"
-              value={form.profilePicture}
-              onChange={update("profilePicture")}
-              placeholder="https://..."
-            />
-
-            <label htmlFor="status">Status (optional)</label>
-            <input
-              id="status"
-              value={form.status}
-              onChange={update("status")}
-              placeholder="Hello there!"
-            />
-
-            <label htmlFor="privacy">Privacy</label>
-            <select
-              id="privacy"
-              value={form.privacy}
-              onChange={update("privacy")}
+            <button
+              type="button"
+              className="toggle-pwd"
+              aria-label={showPwd ? "Hide password" : "Show password"}
+              onClick={() => setShowPwd((s) => !s)}
             >
-              <option value="public">Public</option>
-              <option value="friends">Friends</option>
-              <option value="private">Private</option>
-            </select>
-
-            {error && <div className="error-message">{error}</div>}
-
-            <button type="submit" className="flat-button" disabled={busy}>
-              <UserPlus size={18} /> {busy ? "Signing up…" : "Sign up"}
+              {showPwd ? "🙈" : "👁"}
             </button>
-          </form>
-        </div>
+          </div>
+
+          {/* picture url */}
+          <label htmlFor="profile">Profile picture URL (optional)</label>
+          <input
+            id="profile"
+            value={form.profilePicture}
+            onChange={update("profilePicture")}
+            placeholder="https://..."
+            type="url"
+          />
+          {form.profilePicture && (
+            <img
+              src={form.profilePicture}
+              alt="Preview"
+              className="avatar-preview"
+              onError={(e) => (e.currentTarget.style.display = "none")}
+            />
+          )}
+
+          {/* status */}
+          <label htmlFor="status">Status&nbsp;(optional)</label>
+          <input
+            id="status"
+            value={form.status}
+            onChange={update("status")}
+            placeholder="Hello there!"
+          />
+
+          {/* privacy */}
+          <label htmlFor="privacy">Privacy</label>
+          <select id="privacy" value={form.privacy} onChange={update("privacy")}>
+            <option value="public">Public</option>
+            <option value="friends">Friends</option>
+            <option value="private">Private</option>
+          </select>
+
+          {/* submit */}
+          <button type="submit" className="flat-button" disabled={busy}>
+            <UserPlus size={18} />
+            {busy ? "Creating…" : "Sign up"}
+          </button>
+        </form>
       </div>
     </div>
   );

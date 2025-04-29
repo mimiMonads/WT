@@ -1,54 +1,61 @@
+// Board.jsx
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";   // NEW
 import "./index.scss";
+import { HOST } from "../../links";
 
-const host = "https://api.tripleequal.dev";
-
-/**
- * Board – public wall of messages with create + search.
- *
- * GET  /api/messages            – list all
- * POST /api/messages            – create new
- * GET  /api/messages/search/:q  – search text
- */
 export default function Board() {
+  const { id: to } = useParams();              // <-- recipient Id from URL
   const [messages, setMessages] = useState([]);
-  const [content, setContent] = useState("");
+  const [body, setBody] = useState("");        // renamed for validator
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  // GET helper ― conversation-scoped (optionally searched)
   const loadMessages = async (q = "") => {
     try {
-      const url = q
-        ? `${host}/api/messages/search/${encodeURIComponent(q)}`
-        : `${host}/api/messages`;
-      const res = await fetch(url, { credentials: "include" });
+      // feel free to adjust the endpoint if you later add a dedicated
+      // “conversation” route on the backend ― this still works with the
+      // generic list + client-side filter for now.
+      const url = `${HOST}/api/messages`;
+      const res  = await fetch(url, { credentials: "include" });
       const data = await res.json();
-      setMessages(Array.isArray(data) ? data.reverse() : []);
+      const filtered = Array.isArray(data)
+        ? data
+            .filter((m) => m.to === to || m.from === to) // keep the thread
+            .filter((m) =>
+              q ? (m.body || m.content || "").toLowerCase().includes(q.toLowerCase()) : true
+            )
+            .reverse()
+        : [];
+      setMessages(filtered);
     } catch (err) {
       console.error(err);
     }
   };
 
+  // initial + when URL param changes
   useEffect(() => {
-    loadMessages();
-  }, []);
+    if (to) loadMessages();
+  }, [to]);
 
+  // POST /api/messages
   const submit = async (e) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!body.trim()) return;
     setBusy(true);
     setError("");
     try {
-      const res = await fetch(`${host}/api/messages`, {
+      const res = await fetch(`${HOST}/api/messages`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, sender: "anon", recipient: "board" }),
+        body: JSON.stringify({ body, to }),     // <-- matches validator
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      setContent("");
+      setBody("");
       loadMessages();
     } catch (err) {
       setError(err.message);
@@ -65,12 +72,12 @@ export default function Board() {
   return (
     <div className="board-page">
       <header>
-        <h1>Message Board</h1>
+        <h1>Messages with {to}</h1> {/* simple context for the user */}
         <form onSubmit={searchSubmit} className="search-form">
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search..."
+            placeholder="Search this chat..."
           />
           <button>Search</button>
         </form>
@@ -78,20 +85,20 @@ export default function Board() {
 
       <form onSubmit={submit} className="board-form">
         <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Write something nice..."
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Write your message..."
         />
         {error && <div className="error-message">{error}</div>}
         <button disabled={busy} className="flat-button">
-          {busy ? "Posting..." : "Post"}
+          {busy ? "Sending…" : "Send"}
         </button>
       </form>
 
       <ul className="message-list">
         {messages.map((m) => (
           <li key={m._id} className="message-item">
-            <p>{m.content}</p>
+            <p>{m.body || m.content}</p>
             <span className="meta">
               {new Date(m.createdAt || m.date || Date.now()).toLocaleString()}
             </span>

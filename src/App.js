@@ -15,13 +15,13 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route path="/messages/:id" element={<Board />} />
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="user" element={<User />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="signup" element={<SignUp />} />
-          <Route path="board" element={<Board />} />
         </Route>
       </Routes>
     </>

@@ -4,6 +4,17 @@ import { Message, User } from "../models/models.mjs";
 import { loginSchema, userSchema } from "../validators/validators.mjs";
 import bcrypt from "bcrypt";
 
+export const buildCookieOptions = () => {
+  const prod = process.env.NODE_ENV === "production";
+  return {
+    httpOnly : true,
+    secure   : prod,                    // always secure in prod
+    sameSite : prod ? "None" : "Lax",   // never "None" without secure
+    domain   : prod ? ".tripleequal.dev" : undefined,
+    maxAge   : 24 * 60 * 60 * 1000,
+  };
+};
+
 /**
  * @desc   Login interface
  * @route  POST /signup
@@ -14,7 +25,7 @@ const loginForm = asyncHandler(async (req, res) => {
 });
 
 const signup = asyncHandler(async (req, res) => {
-  console.log(req.body);
+
 
   const { error, value } = userSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
@@ -35,12 +46,7 @@ const signup = asyncHandler(async (req, res) => {
   });
 
   const token = generateToken(newUser._id);
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
+  res.cookie("token", buildCookieOptions());
 
   res.status(201).json({
     _id: newUser._id,
@@ -68,13 +74,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
   const token = generateToken(user._id);
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
-    domain: ".tripleequal.dev",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
+  res.cookie("token", token, buildCookieOptions());
 
   res.json({
     _id: user._id,
