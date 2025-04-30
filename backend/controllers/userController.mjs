@@ -284,8 +284,8 @@ const privacyPage = (req, res) => {
 
  const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedUser = await User.findByIdAndDelete(id);
+    const { _id } = req.user;
+    const deletedUser = await User.findByIdAndDelete(_id);
     if (!deletedUser) return res.status(404).json({ error: "User not found" });
     res.json({ message: "User deleted successfully" });
   } catch (err) {

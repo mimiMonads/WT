@@ -43,7 +43,7 @@ router.post("/user/php", protect, addProfilePicture);
 router.post("/user/status", protect, addStatus);
 router.post("/user/privacy", protect, setPrivacy);
 router.post("/post/:userID", protect, addMessageToUser);
-router.delete('/user/:id', protect, deleteUser);
+router.delete('/user', protect, deleteUser);
 
 
 
