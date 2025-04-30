@@ -143,3 +143,22 @@
     &:hover { background: #e6c200; }
   }
 }
+
+.danger-zone {
+  margin-top: 2rem;
+  border-top: 1px solid #f88;
+  padding-top: 1rem;
+}
+
+.delete-account-btn {
+  background: #e63946;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: #d62828;
+  }
+}
