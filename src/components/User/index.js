@@ -247,16 +247,16 @@ export default function User() {
 
             <div className="settings-block">
               <label>Status</label>
-              <textarea
+              <textarea className="status-input"
                 value={statusDraft}
                 onChange={(e) => setStatusDraft(e.target.value)}
               />
-              <button onClick={saveStatus}>Save status</button>
+              <button className="btnSettings" onClick={saveStatus}>Save status</button>
             </div>
 
             <div className="settings-block">
               <label>Privacy</label>
-              <select
+              <select className="selectionOpt"
                 value={privacyDraft}
                 onChange={(e) => setPrivacyDraft(e.target.value)}
               >
@@ -264,7 +264,7 @@ export default function User() {
                 <option value="friends">Friends</option>
                 <option value="private">Private</option>
               </select>
-              <button onClick={savePrivacy}>Save privacy</button>
+              <button className="btnSettings" onClick={savePrivacy}>Save privacy</button>
             </div>
 
             {/* profile picture upload → /user/php */}

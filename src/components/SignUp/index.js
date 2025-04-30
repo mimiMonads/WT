@@ -1,7 +1,8 @@
 import "./index.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, UserPlus } from "lucide-react";
 import { HOST } from "../../links";
+import AnimatedLetters from "../AnimatedLetters";
 
 export default function SignUp({ onSuccess, onCancel }) {
   const [form, setForm] = useState({
@@ -14,6 +15,13 @@ export default function SignUp({ onSuccess, onCancel }) {
   const [showPwd,   setShowPwd]   = useState(false);
   const [banner,    setBanner]    = useState({ text: "", type: "" }); // error | success
   const [busy,      setBusy]      = useState(false);
+  const [letterClass, setLetterClass] = useState("text-animate");
+
+  /* animated header */
+  useEffect(() => {
+    const id = setTimeout(() => setLetterClass("text-animate-hover"), 3000);
+    return () => clearTimeout(id);
+  }, []);
 
   const update = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -46,7 +54,13 @@ export default function SignUp({ onSuccess, onCancel }) {
   return (
     <div className="signup-page">
       <div className="signup-wrapper">
-        <h1 className="title">Sign&nbsp;Up</h1>
+      <h1 className="title">
+          <AnimatedLetters
+            letterClass={letterClass}
+            strArray={["S", "i", "g", "n", " ", "U", "p"]}
+            idx={15}
+          />
+        </h1>
 
         {onCancel && (
           <button type="button" onClick={onCancel} className="back-btn">
