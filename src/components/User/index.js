@@ -4,6 +4,26 @@ import { useEffect, useState } from "react";
 import { HOST } from "../../links";
 import { Clipboard, Check } from "lucide-react";      // icons
 
+const deleteAccount = async () => {
+  const confirmDelete = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`${HOST}/user`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Failed to delete account");
+
+    alert("Your account has been deleted.");
+    window.location.href = "/"; // redirect to home page or login
+  } catch (err) {
+    alert("Error deleting account.");
+  }
+};
+
+
 export default function User() {
   const [user,         setUser]         = useState(null);
   const [section,      setSection]      = useState("inbox");   // default → inbox
@@ -146,6 +166,12 @@ export default function User() {
             Settings
           </button>
           <button onClick={logout}>Log Out</button>
+          <div className="settings-block danger-zone">
+          <h3>Danger Zone</h3>
+          <button className="delete-account-btn" onClick={deleteAccount}>
+            Delete My Account
+          </button>
+        </div>
         </nav>
       </aside>
 
