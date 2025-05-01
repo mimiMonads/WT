@@ -15,6 +15,7 @@ export const buildCookieOptions = () => {
   };
 };
 
+
 /**
  * @desc   Login interface
  * @route  POST /signup
@@ -87,8 +88,11 @@ const loginUser = asyncHandler(async (req, res) => {
  */
 const logoutUser = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
-    sameSite: "Strict",
+    httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    domain:   process.env.NODE_ENV === "production" ? ".tripleequal.dev" : undefined,
+    path:     "/",               // match your original path if it wasn’t "/"
   });
   res.json({ message: "Logged out" });
 });
