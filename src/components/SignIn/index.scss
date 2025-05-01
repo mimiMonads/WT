@@ -3,10 +3,10 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;         // stick to top on tall screens
+  align-items: flex-start; // stick to top on tall screens
   padding: 40px 16px;
   background: linear-gradient(#1d1d5e 0%, #3333cc 100%);
-  overflow-y: auto;                // ──► whole page scrolls
+  overflow-y: auto; // ──► whole page scrolls
 }
 
 /* wrapper keeps form centred and scrolling on very small screens */
@@ -39,7 +39,6 @@
 
   input[type="text"],
   input[type="password"] {
-
     border-radius: 10px;
     border: none;
     font-size: 15px;
@@ -52,7 +51,6 @@
     position: relative;
     input {
       width: 100%;
-    
     }
     .toggle-pwd {
       position: absolute;
@@ -86,8 +84,14 @@
     border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
-    &.error   { background: #ff4d4f; color: #fff; }
-    &.success { background: #4caf50; color: #fff; }
+    &.error {
+      background: #ff4d4f;
+      color: #fff;
+    }
+    &.success {
+      background: #4caf50;
+      color: #fff;
+    }
   }
 
   /* main action */
@@ -102,8 +106,13 @@
     border: none;
     cursor: pointer;
     transition: background 0.3s ease;
-    &:hover { background-color: #e6c200; }
-    &:disabled { opacity: 0.5; cursor: default; }
+    &:hover {
+      background-color: #e6c200;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
   }
 
   /* auxiliary links */
@@ -116,8 +125,12 @@
     a {
       color: #ffd700;
       text-decoration: none;
-      &:hover { text-decoration: underline; }
-      &.forgot { opacity: 0.9; }
+      &:hover {
+        text-decoration: underline;
+      }
+      &.forgot {
+        opacity: 0.9;
+      }
     }
   }
 }

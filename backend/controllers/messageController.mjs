@@ -3,13 +3,17 @@ import { Message } from "../models/models.mjs";
 import { messageSchema } from "../validators/validators.mjs";
 
 /**
- * @desc    Get last 10 messages
- * @route   GET /api/messages
+ * @desc    get last 10 messages
+ * @route   GET /api/messages/of/:user
  * @access  Public
  */
 const getMessages = asyncHandler(async (req, res) => {
-  const messages = await Message.find()
-    .limit(10)
+  const messages = await Message.find({
+    to: req.params.user,
+    replied: true,
+  })
+    .limit(10);
+
   res.status(200).json(messages);
 });
 
@@ -20,16 +24,18 @@ const getMessages = asyncHandler(async (req, res) => {
  */
 const createMessage = asyncHandler(async (req, res) => {
   // Validate request body using your validator
+
   const { error } = messageSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
   }
 
   // Destructure data from the request
-  const { content, sender, recipient } = req.body;
+  const { to, body, from } = req.body;
 
   // Create the message in Mongo
-  const newMessage = await Message.create({ content, sender, recipient });
+  const newMessage = await Message.create({ to, body, from });
+
   res.status(201).json(newMessage);
 });
 

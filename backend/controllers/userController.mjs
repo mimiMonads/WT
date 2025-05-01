@@ -7,11 +7,11 @@ import bcrypt from "bcrypt";
 export const buildCookieOptions = () => {
   const prod = process.env.NODE_ENV === "production";
   return {
-    httpOnly : true,
-    secure   : prod,                    // always secure in prod
-    sameSite : prod ? "None" : "Lax",   // never "None" without secure
-    domain   : prod ? ".tripleequal.dev" : undefined,
-    maxAge   : 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: prod, // always secure in prod
+    sameSite: prod ? "None" : "Lax", // never "None" without secure
+    domain: prod ? ".tripleequal.dev" : undefined,
+    maxAge: 24 * 60 * 60 * 1000,
   };
 };
 
@@ -25,8 +25,6 @@ const loginForm = asyncHandler(async (req, res) => {
 });
 
 const signup = asyncHandler(async (req, res) => {
-
-
   const { error, value } = userSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
@@ -35,7 +33,6 @@ const signup = asyncHandler(async (req, res) => {
     return res.status(409).json({ error: "Username already taken" });
   }
 
- 
   const password = await bcrypt.hash(value.password, 10);
   const newUser = await User.create({
     name: value.name,
@@ -66,7 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const { name, password } = req.body;
 
-  const user = await User.findOne({ name});
+  const user = await User.findOne({ name });
 
   if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
@@ -103,7 +100,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const getUserMessages = asyncHandler(async (req, res) => {
   // If we're using 'protect', then req.user should be set
   const userId = req.user._id; // or from the request body if you prefer
-  const messages = await Message.find({ recipient: userId });
+  const messages = await Message.find({ to: userId });
   res.status(200).json(messages);
 });
 
@@ -127,18 +124,17 @@ const refuseMessage = asyncHandler(async (req, res) => {
  * @route  POST /user/replay
  */
 const replayMessage = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const { messageId, replyContent } = req.body;
+  //const userId = req.user._id;
+  const { messageId, replyText } = req.body;
 
-  const message = await Message.findOne({ _id: messageId, recipient: userId });
+  const message = await Message.findOne({ _id: messageId });
   if (!message) {
     return res.status(404).json({ error: "Message not found" });
   }
 
-  message.replies.push({
-    content: replyContent,
-    date: new Date(),
-  });
+  message.answer = replyText;
+  message.replied = true;
+
   await message.save();
 
   res.status(201).json({ message: "Reply added", data: message });
@@ -231,8 +227,8 @@ const getMainPage = asyncHandler(async (req, res) => {
  * @route  GET /user
  */
 const getUserProfile = asyncHandler(async (req, res) => {
-  let user
-  
+  let user;
+
   try {
     user = await User.findById(req.user._id);
   } catch (e) {
@@ -282,7 +278,7 @@ const privacyPage = (req, res) => {
   res.send("Privacy information...");
 };
 
- const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const { _id } = req.user;
     const deletedUser = await User.findByIdAndDelete(_id);
@@ -293,12 +289,12 @@ const privacyPage = (req, res) => {
   }
 };
 
-
 export {
   aboutProject,
   addMessageToUser,
   addProfilePicture,
   addStatus,
+  deleteUser,
   getMainPage,
   getUserInterface,
   getUserMessages,
@@ -311,5 +307,4 @@ export {
   replayMessage,
   setPrivacy,
   signup,
-  deleteUser
 };

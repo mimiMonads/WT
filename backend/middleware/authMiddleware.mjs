@@ -15,22 +15,21 @@ const protect = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
-    typeof req.cookies?.token == "string" 
+    typeof req.cookies?.token == "string"
   ) {
     try {
-      token = req.cookies.token // extract token
+      token = req.cookies.token; // extract token
       const decoded = verify(req.cookies.token, process.env.JWT_SECRET);
 
-   
       const user = await User.findById(decoded.id);
-  
+
       if (!user) {
         return res
           .status(401)
           .json({ error: "Not authorized, user not found" });
       }
 
-      req.user = user
+      req.user = user;
       return next();
     } catch (error) {
       return res

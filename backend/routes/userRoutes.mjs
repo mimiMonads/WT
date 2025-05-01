@@ -7,6 +7,7 @@ import {
   addMessageToUser,
   addProfilePicture,
   addStatus,
+  deleteUser,
   getMainPage,
   getUserInterface,
   getUserMessages,
@@ -19,14 +20,13 @@ import {
   replayMessage,
   setPrivacy,
   signup,
-  deleteUser
 } from "../controllers/userController.mjs";
 
 // Public routes
 router.get("/", getMainPage);
 router.get("/login", loginForm);
 router.post("/login", loginUser);
-router.get("/logout", logoutUser); // Could be public or protected
+router.get("/logout", logoutUser);
 router.get("/about", aboutProject);
 router.get("/privacy", privacyPage);
 
@@ -43,8 +43,6 @@ router.post("/user/php", protect, addProfilePicture);
 router.post("/user/status", protect, addStatus);
 router.post("/user/privacy", protect, setPrivacy);
 router.post("/post/:userID", protect, addMessageToUser);
-router.delete('/user', protect, deleteUser);
-
-
+router.delete("/user", protect, deleteUser);
 
 export default router;

@@ -12,9 +12,9 @@ export default function SignUp({ onSuccess, onCancel }) {
     status: "",
     privacy: "public",
   });
-  const [showPwd,   setShowPwd]   = useState(false);
-  const [banner,    setBanner]    = useState({ text: "", type: "" }); // error | success
-  const [busy,      setBusy]      = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [banner, setBanner] = useState({ text: "", type: "" }); // error | success
+  const [busy, setBusy] = useState(false);
   const [letterClass, setLetterClass] = useState("text-animate");
 
   /* animated header */
@@ -32,7 +32,7 @@ export default function SignUp({ onSuccess, onCancel }) {
     setBusy(true);
 
     try {
-      const res  = await fetch(`${HOST}/signup`, {
+      const res = await fetch(`${HOST}/signup`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -42,7 +42,7 @@ export default function SignUp({ onSuccess, onCancel }) {
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
       setBanner({ text: data.message, type: "success" });
-      onSuccess?.(data);                    // parent can redirect
+      onSuccess?.(data); // parent can redirect
     } catch (err) {
       setBanner({ text: err.message, type: "error" });
       console.error(err);
@@ -54,7 +54,7 @@ export default function SignUp({ onSuccess, onCancel }) {
   return (
     <div className="signup-page">
       <div className="signup-wrapper">
-      <h1 className="title">
+        <h1 className="title">
           <AnimatedLetters
             letterClass={letterClass}
             strArray={["S", "i", "g", "n", " ", "U", "p"]}
@@ -141,7 +141,11 @@ export default function SignUp({ onSuccess, onCancel }) {
 
           {/* privacy */}
           <label htmlFor="privacy">Privacy</label>
-          <select id="privacy" value={form.privacy} onChange={update("privacy")}>
+          <select
+            id="privacy"
+            value={form.privacy}
+            onChange={update("privacy")}
+          >
             <option value="public">Public</option>
             <option value="friends">Friends</option>
             <option value="private">Private</option>

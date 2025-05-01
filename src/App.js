@@ -15,7 +15,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/messages/:id" element={<Board />} />
+          <Route path="/messages" element={<Board />} />
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="signin" element={<SignIn />} />

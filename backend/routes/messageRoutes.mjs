@@ -11,8 +11,10 @@ import {
 
 // /api/messages
 router.route("/")
-  .get(getMessages)
   .post(createMessage);
+
+router.route("/of/:user")
+  .get(getMessages);
 
 // /api/messages/search/:query
 router.get("/search/:query", searchMessages);

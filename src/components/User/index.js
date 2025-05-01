@@ -2,10 +2,12 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
 import { HOST } from "../../links";
-import { Clipboard, Check } from "lucide-react";      // icons
+import { Check, Clipboard } from "lucide-react"; // icons
 
 const deleteAccount = async () => {
-  const confirmDelete = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete your account? This action is irreversible.",
+  );
   if (!confirmDelete) return;
 
   try {
@@ -23,16 +25,15 @@ const deleteAccount = async () => {
   }
 };
 
-
 export default function User() {
-  const [user,         setUser]         = useState(null);
-  const [section,      setSection]      = useState("inbox");   // default → inbox
-  const [statusDraft,  setStatusDraft]  = useState("");
+  const [user, setUser] = useState(null);
+  const [section, setSection] = useState("inbox"); // default → inbox
+  const [statusDraft, setStatusDraft] = useState("");
   const [privacyDraft, setPrivacyDraft] = useState("public");
-  const [items,        setItems]        = useState([]);
-  const [loading,      setLoading]      = useState(false);
-  const [linkCopied,   setLinkCopied]   = useState(false);
-  const shareURL = `${window.location.origin}/messages/${user?._id ?? ""}`;
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const shareURL = `${window.location.origin}/messages?to=${user?._id ?? ""}`;
 
   /* ---------------- profile ---------------- */
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function User() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),          // backend ignores body
+      body: JSON.stringify({}), // backend ignores body
     })
       .then((r) => r.json())
       .then(setItems)
@@ -70,7 +71,7 @@ export default function User() {
 
   /* ---------------- actions ---------------- */
   const logout = async () => {
-    await fetch(`${HOST}/logout`, { method: "POST", credentials: "include" });
+    await fetch(`${HOST}/logout`, { method: "GET", credentials: "include" });
     window.location.reload();
   };
 
@@ -123,8 +124,10 @@ export default function User() {
   };
 
   /* ---------------- render ----------------- */
-  if (user === null)  return <div className="loading">Loading…</div>;
-  if (user === false) return <div className="login-placeholder">Please log in.</div>;
+  if (user === null) return <div className="loading">Loading…</div>;
+  if (user === false) {
+    return <div className="login-placeholder">Please log in.</div>;
+  }
 
   return (
     <div className="container user-page">
@@ -167,11 +170,11 @@ export default function User() {
           </button>
           <button onClick={logout}>Log Out</button>
           <div className="settings-block danger-zone">
-          <h3>Danger Zone</h3>
-          <button className="delete-account-btn" onClick={deleteAccount}>
-            Delete My Account
-          </button>
-        </div>
+            <h3>Danger Zone</h3>
+            <button className="delete-account-btn" onClick={deleteAccount}>
+              Delete My Account
+            </button>
+          </div>
         </nav>
       </aside>
 
@@ -199,9 +202,9 @@ export default function User() {
                         onClick={() =>
                           reply(
                             msg._id,
-                            prompt("Reply message:", `Re: ${msg.body || ""}`) || ""
-                          )
-                        }
+                            prompt("Reply message:", `Re: ${msg.body || ""}`) ||
+                              "",
+                          )}
                       >
                         Reply
                       </button>
@@ -223,19 +226,19 @@ export default function User() {
             <ul className="question-list">
               {(items.length ? items : user.questions || []).map((q) => (
                 <li key={q._id || q.id} className="question-item">
-                  <h3>{q.title || q.content}</h3>
+                  <p>{q.body}</p>
+                  <p>{q.answer}</p>
                   <span
-                    className={`status ${(q.status || "open").toLowerCase()}`}
+                    className={`status ${(q.replied || "open")}`}
                   >
-                    {q.status || "Open"}
+                    {q.replied === true ? "Answered" : "Not yet"}
                   </span>
                 </li>
               ))}
               {!loading &&
                 (items.length === 0 &&
-                  (!user.questions || user.questions.length === 0)) && (
-                  <p>No questions yet.</p>
-                )}
+                  (!user.questions || user.questions.length === 0)) &&
+                <p>No questions yet.</p>}
             </ul>
           </>
         )}
@@ -247,16 +250,20 @@ export default function User() {
 
             <div className="settings-block">
               <label>Status</label>
-              <textarea className="status-input"
+              <textarea
+                className="status-input"
                 value={statusDraft}
                 onChange={(e) => setStatusDraft(e.target.value)}
               />
-              <button className="btnSettings" onClick={saveStatus}>Save status</button>
+              <button className="btnSettings" onClick={saveStatus}>
+                Save status
+              </button>
             </div>
 
             <div className="settings-block">
               <label>Privacy</label>
-              <select className="selectionOpt"
+              <select
+                className="selectionOpt"
                 value={privacyDraft}
                 onChange={(e) => setPrivacyDraft(e.target.value)}
               >
@@ -264,7 +271,9 @@ export default function User() {
                 <option value="friends">Friends</option>
                 <option value="private">Private</option>
               </select>
-              <button className="btnSettings" onClick={savePrivacy}>Save privacy</button>
+              <button className="btnSettings" onClick={savePrivacy}>
+                Save privacy
+              </button>
             </div>
 
             {/* profile picture upload → /user/php */}

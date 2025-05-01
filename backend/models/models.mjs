@@ -44,6 +44,11 @@ const MessageSchema = new Schema({
     minlength: 1,
     maxlength: 1000,
   },
+  answer: {
+    type: String,
+    minlength: 1,
+    maxlength: 1000,
+  },
   replied: {
     type: Boolean,
     default: false,
